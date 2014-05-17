@@ -13,6 +13,3 @@ class Student(models.Model):
     faculty = models.CharField( max_length=50 )
     creation_date = models.DateTimeField( 'date published' )
     photo_url = models.CharField( max_length=200 )
-
-
-# ronvis

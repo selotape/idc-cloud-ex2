@@ -1,0 +1,9 @@
+{% if latest_students_list %}
+    <ul>
+    {% for student in latest_students_list %}
+        <li><a href="/students/{{ student.student_id }}/">{{ student.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No students are available.</p>
+{% endif %}
