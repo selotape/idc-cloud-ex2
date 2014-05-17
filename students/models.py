@@ -3,7 +3,7 @@ from django.db import models
 class Student(models.Model):
 
     def __unicode__(self):
-        return self.name + ', ' + str(self.student_id)
+        return self.name + ', ' + str(self.student_id) + ', ' + self.faculty
 
     student_id = models.IntegerField( primary_key=True )
     country = models.CharField( max_length=50 )
