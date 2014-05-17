@@ -14,3 +14,5 @@ class Student(models.Model):
     creation_date = models.DateTimeField( 'date published' )
     photo_url = models.CharField( max_length=200 )
 
+
+# ronvis
