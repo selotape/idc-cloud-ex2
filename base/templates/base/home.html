@@ -13,6 +13,8 @@ body {
 
 {% block page_title %} IDC - Cloud Computing - Exercies 2{% endblock %}
 {% block page_class %}home-page{% endblock %}
+
+
 {% block content %}
 <!-- This code is taken from http://getbootstrap.com/examples/jumbotron/ -->
 
@@ -25,20 +27,19 @@ body {
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#"> <span class="glyphicon glyphicon-cloud"></span>  Cloud Computing</a>
+          <a class="navbar-brand" href="#"><span class="glyphicon glyphicon-cloud"></span>Cloud Computing</a>
         </div>
         <div class="navbar-collapse collapse">
         </div><!--/.navbar-collapse -->
       </div>
     </div>
 
-
-<div class="panel panel-default">
+<div class="panel panel-default container-fluid">
   <!-- Default panel contents -->
   <div class="panel-heading">Students List</div>
 
   <!-- Table -->
-  <table class="table">
+  <table class="table table-striped table-condensed">
     <thead>
       <th>#</th>
       <th>Name</th>
@@ -47,26 +48,46 @@ body {
       <th>City</th>
       <th>Age</th>
       <th>Faculty</th>
-      <th>Creation Date</th>
       <th>Photo</th>
+      <th>Creation Date</th>
     </thead>
     <tbody>
     {% for student in latest_students_list %}
         <tr>
-          <td>{{ forloop.counter }}</td>
-          <td>{{ student.name }}</td>
+          <td> 
+	    {{ forloop.counter }} 
+	  </td>
+          <td> <a href="/students/delete/{{student.student_id}}" ><span class="glyphicon glyphicon-remove"></a> {{ student.name }}</td>
           <td>{{ student.student_id }}</td>
           <td>{{ student.country }}</td>
           <td>{{ student.city }}</td>
           <td>{{ student.age }}</td>
           <td>{{ student.faculty }}</td>
+          <td><img src="{{student.photo_url}}"/></td>
           <td>{{ student.creation_date }}</td>
-          <td><a href="{{ student.photo_url }}/">Photo</a></td>
         </tr>
     {% endfor %}
+
+      <form action="/students/add" method="post" enctype="multipart/form-data">{% csrf_token %}
+	<fieldset>
+	<tr>
+	  <td>#</td>
+	  {% for field in form %}
+	  <td>{{ field }}</td>
+	  {% endfor %}
+	  <td/><!--extra column for creation_date-->
+	</tr>
+	<tr>
+	  <td/><td><input type="submit" value="Submit"></td>
+	  <td/><td/><td/><td/><td/><td/><td/>
+	</tr>
+	</fieldset>
+      </form>
     </tbody>
-  
-  </table>
 </div>
 
+{% endblock %}
+
+{% block footer %}
+<!-- clear the footer cause it gets stuck in the middle of the html-->
 {% endblock %}
