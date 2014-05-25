@@ -6,3 +6,18 @@
    css/less/bootstrap.less file.
 
    ========================================================================== */
+table {
+  width: auto;
+}
+
+input {
+  width: 99%;
+}
+
+th {
+  width: auto;
+}
+
+.black {
+  color: black;
+}

@@ -21,25 +21,15 @@ body {
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container">
       <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
           <a class="navbar-brand" href="#"><span class="glyphicon glyphicon-cloud"></span>Cloud Computing</a>
         </div>
-        <div class="navbar-collapse collapse">
-        </div><!--/.navbar-collapse -->
       </div>
     </div>
 
-<div class="panel panel-default container-fluid">
-  <!-- Default panel contents -->
-  <div class="panel-heading">Students List</div>
+  <h3>Students List</h3>
 
   <!-- Table -->
-  <table class="table table-striped table-condensed">
+  <table class="table table-striped table-condensed" >
     <thead>
       <th>#</th>
       <th>Name</th>
@@ -57,7 +47,7 @@ body {
           <td> 
 	    {{ forloop.counter }} 
 	  </td>
-          <td> <a href="/students/delete/{{student.student_id}}" ><span class="glyphicon glyphicon-remove"></a> {{ student.name }}</td>
+          <td> <a href="/students/delete/{{student.student_id}}" ><span class="glyphicon glyphicon-remove black"></a> {{ student.name }}</td>
           <td>{{ student.student_id }}</td>
           <td>{{ student.country }}</td>
           <td>{{ student.city }}</td>
@@ -85,7 +75,6 @@ body {
 	</fieldset>
       </form>
     </tbody>
-</div>
 
 {% endblock %}
 
