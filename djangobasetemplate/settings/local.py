@@ -19,6 +19,14 @@ DATABASES = {
         'PASSWORD': 'idcex2dbinstance',
         'HOST': 'idc-ex2-dbinstance.ccop2vgfcvfp.us-east-1.rds.amazonaws.com',
         'PORT': '3306',
+    },
+    'slave': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'studentDb',
+        'USER': 'idcex2dbinstance',
+        'PASSWORD': 'idcex2dbinstance',
+        'HOST': 'idc-ex2-dbinstance-readreplica.ccop2vgfcvfp.us-east-1.rds.amazonaws.com',
+        'PORT': '3306',
     }
 }
 

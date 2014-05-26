@@ -7,7 +7,8 @@ from base.utils import s3
 
 # Create your views here.
 def home(request):
-    latest_students_list = Student.objects.all().order_by('-creation_date')[:10]
+    #read latest 10 students from 'slave' db
+    latest_students_list = Student.objects.using('slave').all().order_by('-creation_date')[:10]
 
     form = StudentForm()
     context = {
