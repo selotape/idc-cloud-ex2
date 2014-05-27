@@ -9,14 +9,10 @@ import types
 from datetime import datetime, timedelta
 from uuid import uuid1
 import re
+import secrets
 
-AWSAccessKeyId='AKIAJSQ5UF3IOBMZTRLA'
-AWSSecretKey='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'
-bucket_name = 'idc-cloud-ex2-bucket'
-
-
-connection = boto.connect_s3(AWSAccessKeyId, AWSSecretKey)
-bucket = connection.get_bucket(bucket_name)
+connection = boto.connect_s3(secrets.AWSAccessKeyId, secrets.AWSSecretKey)
+bucket = connection.get_bucket(secrets.bucket_name)
 
 
 def upload_file(file):
