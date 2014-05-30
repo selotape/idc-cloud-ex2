@@ -2,15 +2,18 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from base.models import Student
-from base.forms import StudentForm
+from base.forms import MySqlStudentForm, DynamoStudentForm
 from base.utils import s3
 from base.utils import cache_db
+from base.utils.model_conversions import cache_to_model
+from base.utils.model_conversions import db_to_model
+
 
 def mysql(request):
     #read latest 10 students from 'slave' db
     latest_students_list = Student.objects.using('slave').all().order_by('-creation_date')[:10]
 
-    form = StudentForm()
+    form = MySqlStudentForm()
     context = {
 	'app_name' : 'mysql',
         'latest_students_list': latest_students_list,
@@ -39,26 +42,46 @@ def mysql_delete_student(request, student_id):
 
 
 
-def dynamo(request):
-    #read latest 10 students
-    latest_students_list = cache_db.get_latest(10)
+db_conn_details = None
+cache_conn_details = { # TODO - move this to some config/properties file
+    'host' : 'idc-cloud-ex2-cache.brlx8k.0001.use1.cache.amazonaws.com',
+    'port' : 6379,
+    'db'   : 0,
+}
 
-    form = StudentForm()
+cache_db = cache_db.get_connection(db_conn_details, cache_conn_details)
+
+def dynamo(request):
+    print 'GET was made to dynamo'
+    # read latest 10 students
+    print 'getting latest students from cache_db'
+    latest_students = cache_db.get_latest(10)
+    
+    # make them presentable and serve them to the client
+    #latest_students = map(cache_to_model, latest_students)
+    form = DynamoStudentForm()
     context = {
-	'app_name' : 'dynamo',
-        'latest_students_list': latest_students_list,
+        'app_name' : 'dynamo',
+        'latest_students_list': latest_students,
         'form' : form,
     }
     return render(request, 'base/dynamo.html', context)
 
 def dynamo_add_student(request):
-#    if request.method == 'POST': # If the form has been submitted...
-#        form = StudentForm(request.POST) # A form bound to the POST data
-#        if form.is_valid(): # All validation rules pass
-#	    student = form.to_student()
-#	    photo_url = s3.upload_file(request.FILES['student_photo'])# TODO - somehow take the 'name' of the photo from the request itself
-#	    student.photo_url = photo_url
-#    	    cache_db.save(student)
+    if request.method == 'POST': # If the form has been submitted...
+        print 'Post was made to dynamo_add_student'
+        print 'form content: ' + str(request.POST)
+        form = DynamoStudentForm(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+            print 'Post form was valid'
+	    student = form.to_student()
+            photo_url = s3.upload_file(request.FILES['student_photo'])# TODO - somehow take the 'name' of the photo from the request itself
+	    student.photo_url = photo_url
+    	    if  not cache_db.insert(student):
+                raise Exception('failed inserting %s into cache_db', str(student))
+        else:
+            for field in form:
+                print 'field error: ' + str(field.errors)
     return HttpResponseRedirect('/dynamo')
 
 def dynamo_delete_student(request, student_id):
