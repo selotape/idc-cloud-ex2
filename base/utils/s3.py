@@ -26,7 +26,7 @@ def upload_file(file):
 
     # key.copy(bucket_name, key, metadata=aggressive_headers, preserve_acl=True)
 
-    return key.generate_url(expires_in=1*60*60*24*30) # make url permanent
+    return key.generate_url(expires_in=0, force_http=True, query_auth=False) # make url permanent
 
 
 def delete_file(url):

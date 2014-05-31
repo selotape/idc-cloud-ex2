@@ -23,7 +23,7 @@ def mysql(request):
 
 def mysql_add_student(request):
     if request.method == 'POST': # If the form has been submitted...
-        form = StudentForm(request.POST) # A form bound to the POST data
+        form = MySqlStudentForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
 	    student = form.save(commit=False)
 	    photo_url = s3.upload_file(request.FILES['student_photo'])# TODO - somehow take the 'name' of the photo from the request itself
