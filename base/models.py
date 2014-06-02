@@ -4,8 +4,8 @@ from datetime import datetime
 """ Basic models, such as user profile """
 class Student(models.Model):
 
-    #def __unicode__(self):
-    #    return self.name + ', ' + str(self.student_id)
+    def __unicode__(self):
+        return self.name + ', ' + str(self.student_id)
 
     student_id = models.IntegerField( primary_key=True )
     country = models.CharField( max_length=50 )

@@ -37,7 +37,7 @@ def delete_file(url):
 
 
 #--- Helpers ----------------------------------------------
-regex = u's3.amazonaws.com/(.+)\?'
+regex = u's3.amazonaws.com/(.+)'
 def deduce_key_name(url):
     match = re.search(regex, url)
     key_name = match.groups(1)

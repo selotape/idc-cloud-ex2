@@ -1,4 +1,3 @@
-""" Views for the base application """
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from base.models import Student
@@ -42,7 +41,10 @@ def mysql_delete_student(request, student_id):
 
 
 
-db_conn_details = None
+db_conn_details = {
+    'table' : 'idc-cloud-ex2-dynamo-table',
+    # credentials : in_boto_config,
+}
 cache_conn_details = { # TODO - move this to some config/properties file
     'host' : 'idc-cloud-ex2-cache.brlx8k.0001.use1.cache.amazonaws.com',
     'port' : 6379,
@@ -67,10 +69,27 @@ def dynamo(request):
     }
     return render(request, 'base/dynamo.html', context)
 
+def dynamo_by_attribute(request, attribute):
+    value = request.GET.get('q', '')
+    print 'GET was made to dynamo_by_attribute with parameter ' + attribute + '=' + value
+    # read latest 10 students
+    print 'getting students by attribute from cache_db'
+    students = cache_db.get_by_attribute(attribute, value)
+    
+    # make them presentable and serve them to the client
+    #latest_students = map(cache_to_model, latest_students)
+    form = DynamoStudentForm()
+    context = {
+        'app_name' : 'dynamo',
+        'latest_students_list': students,
+        'form' : form,
+    }
+    return render(request, 'base/dynamo.html', context)
+    
+
 def dynamo_add_student(request):
     if request.method == 'POST': # If the form has been submitted...
         print 'Post was made to dynamo_add_student'
-        print 'form content: ' + str(request.POST)
         form = DynamoStudentForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
             print 'Post form was valid'
@@ -85,9 +104,13 @@ def dynamo_add_student(request):
     return HttpResponseRedirect('/dynamo')
 
 def dynamo_delete_student(request, student_id):
-#    if request.method == 'GET':
-#        student = cache_db.get_by_id(student_id)
-#	if student != None:
-#	    s3.delete_file(student.photo_url)
-#	    cache_db.delete(student_id)
+    print 'inside dynamo_delete_student'
+    if request.method == 'GET':# TODO - change this to DELETE
+        student = cache_db.get_by_id(student_id)
+        print 'got student ' + str(student) + ' from cache_db'
+	if student != None:
+            print 'deleting ' + student.photo_url + ' from s3'
+	    s3.delete_file(student.photo_url)
+            print 'deleting ' + student.photo_url + ' from cache_db'
+	    cache_db.remove(student_id)
     return HttpResponseRedirect('/dynamo')
