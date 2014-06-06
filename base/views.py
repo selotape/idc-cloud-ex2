@@ -19,6 +19,7 @@ def mysql(request):
         'form' : form,
     }
     return render(request, 'base/mysql.html', context)
+
 _cloudfront_prefix = 'https://d2d9cpp21l4wuy.cloudfront.net/'
 def mysql_add_student(request):
     if request.method == 'POST': # If the form has been submitted...
@@ -45,6 +46,7 @@ def mysql_delete_student(request, student_id):
 
 
 
+
 db_conn_details = {
     'table' : 'idc-cloud-ex2-dynamo-table',
     # credentials : in_boto_config,
@@ -58,9 +60,7 @@ cache_conn_details = { # TODO - move this to some config/properties file
 cache_db = cache_db.get_connection(db_conn_details, cache_conn_details)
 
 def dynamo(request):
-    print 'GET was made to dynamo'
     # read latest 10 students
-    print 'getting latest students from cache_db'
     latest_students = cache_db.get_latest(10)
     
     # make them presentable and serve them to the client
@@ -75,9 +75,7 @@ def dynamo(request):
 
 def dynamo_by_attribute(request, attribute):
     value = request.GET.get('q', '')
-    print 'GET was made to dynamo_by_attribute with parameter ' + attribute + '=' + value
     # read latest 10 students
-    print 'getting students by attribute from cache_db'
     students = cache_db.get_by_attribute(attribute, value)
     
     # make them presentable and serve them to the client
@@ -93,28 +91,30 @@ def dynamo_by_attribute(request, attribute):
 
 def dynamo_add_student(request):
     if request.method == 'POST': # If the form has been submitted...
-        print 'Post was made to dynamo_add_student'
         form = DynamoStudentForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
-            print 'Post form was valid'
+            photo = request.FILES['student_photo']
+
+	    key_name = s3.upload(photo)
+	    photo_url = _cloudfront_prefix + key_name
+
+
 	    student = form.to_student()
-            photo_url = s3.upload(request.FILES['student_photo'])# TODO - somehow take the 'name' of the photo from the request itself
 	    student.photo_url = photo_url
     	    if  not cache_db.insert(student):
                 raise Exception('failed inserting %s into cache_db', str(student))
-        else:
-            for field in form:
-                print 'field error: ' + str(field.errors)
     return HttpResponseRedirect('/dynamo')
 
 def dynamo_delete_student(request, student_id):
-    print 'inside dynamo_delete_student'
     if request.method == 'GET':# TODO - change this to DELETE
         student = cache_db.get_by_id(student_id)
-        print 'got student ' + str(student) + ' from cache_db'
 	if student != None:
-            print 'deleting ' + student.photo_url + ' from s3'
 	    s3.delete_file(student.photo_url)
-            print 'deleting ' + student.photo_url + ' from cache_db'
 	    cache_db.remove(student_id)
+    return HttpResponseRedirect('/dynamo')
+
+def clear_dynamo(request):
+    if request.method == 'GET':
+        cache_db._clear()
+        # TODO - clear images from s3
     return HttpResponseRedirect('/dynamo')

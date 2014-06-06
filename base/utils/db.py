@@ -9,16 +9,13 @@ from datetime import datetime
 
 class Db:
     def __init__(self, conn_details):
-        print 'connecting to Dynamo using details:' + str(conn_details)
         self.table = Table(conn_details['table'])
 
     def insert(self, student_id, student):
-	print 'inserting <' + str(student) + '> to db'
         student_item = student_to_item(self.table, student)
         return student_item.save()
 
     def get_by_id(self, my_student_id):
-        print 'getting student ' + str(my_student_id) + ' from db'
         student_item = self.table.get_item(student_id=int(my_student_id))
         if student_item is not None: return item_to_student(student_item)
 	else:
@@ -50,7 +47,7 @@ class Db:
 
     def _clear(self):
         all_students_items = self.table.scan()
-        for student_item in all_students:
+        for student_item in all_students_items:
             student_item.delete()
 
             

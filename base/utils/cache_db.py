@@ -42,7 +42,7 @@ class Cache_Db:
         students = self.mydb.get_by_attribute(attribute, value)
         return students 
 
-    def _clear_cache_db(self):
+    def _clear(self):
         self.mydb._clear()
         self.mycache._clear()
 
