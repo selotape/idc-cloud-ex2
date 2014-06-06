@@ -109,7 +109,7 @@ def dynamo_delete_student(request, student_id):
     if request.method == 'GET':# TODO - change this to DELETE
         student = cache_db.get_by_id(student_id)
 	if student != None:
-	    s3.delete_file(student.photo_url)
+	    #s3.delete_file(student.photo_url)
 	    cache_db.remove(student_id)
     return HttpResponseRedirect('/dynamo')
 
