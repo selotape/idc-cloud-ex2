@@ -46,7 +46,7 @@ INSTALLED_APPS = (
 
     # Third-party apps, patches, fixes
     'djcelery',
-    'debug_toolbar',
+    #'debug_toolbar',
     'compressor',
 
     # Database migrations

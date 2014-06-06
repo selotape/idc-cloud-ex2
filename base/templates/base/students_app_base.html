@@ -67,7 +67,8 @@ body {
       {% for student in latest_students_list %}
         <tr>
           <td>{{ forloop.counter }}</td>
-          <td> <a href="/{{app_name}}/students/delete/{{student.student_id}}" ><span class="glyphicon glyphicon-remove black"></a> {{ student.name }}</td>
+          <!--<td> <a href="/{{app_name}}/students/delete/{{student.student_id}}" ><span class="glyphicon glyphicon-remove black"></a> {{ student.name }}</td>-->
+          <td>{{ student.name }}</td>
           <td>{{ student.student_id }}</td>
           <td>{{ student.country }}</td>
           <td>{{ student.city }}</td>
