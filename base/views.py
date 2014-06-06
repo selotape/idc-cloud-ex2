@@ -19,14 +19,18 @@ def mysql(request):
         'form' : form,
     }
     return render(request, 'base/mysql.html', context)
-
+_cloudfront_prefix = 'https://d2d9cpp21l4wuy.cloudfront.net/'
 def mysql_add_student(request):
     if request.method == 'POST': # If the form has been submitted...
         form = MySqlStudentForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
 	    student = form.save(commit=False)
-	    photo_url = s3.upload_file(request.FILES['student_photo'])# TODO - somehow take the 'name' of the photo from the request itself
-	    student.photo_url = photo_url
+            photo = request.FILES['student_photo']
+
+	    key_name = s3.upload(photo)
+	    photo_url = _cloudfront_prefix + key_name
+            student.photo_url = photo_url
+
     	    student.save()
     return HttpResponseRedirect('/mysql') # Redirect home after POST
 
@@ -94,7 +98,7 @@ def dynamo_add_student(request):
         if form.is_valid(): # All validation rules pass
             print 'Post form was valid'
 	    student = form.to_student()
-            photo_url = s3.upload_file(request.FILES['student_photo'])# TODO - somehow take the 'name' of the photo from the request itself
+            photo_url = s3.upload(request.FILES['student_photo'])# TODO - somehow take the 'name' of the photo from the request itself
 	    student.photo_url = photo_url
     	    if  not cache_db.insert(student):
                 raise Exception('failed inserting %s into cache_db', str(student))

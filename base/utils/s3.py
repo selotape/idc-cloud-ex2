@@ -14,19 +14,19 @@ import secrets
 connection = boto.connect_s3(secrets.AWSAccessKeyId, secrets.AWSSecretKey)
 bucket = connection.get_bucket(secrets.bucket_name)
 
-
-def upload_file(file):
+def upload(file):
     key = Key(bucket)
-    key.key = str(uuid1()) + '.' + str(file)
+    key_name = str(uuid1()) + '.' + str(file)
+    key.key = key_name
 
     # set cache headers
     aggressive_headers = get_aggressive_cache_headers()
     key.metadata.update(aggressive_headers)
     key.set_contents_from_file(file)
 
-    # key.copy(bucket_name, key, metadata=aggressive_headers, preserve_acl=True)
-
-    return key.generate_url(expires_in=0, force_http=True, query_auth=False) # make url permanent
+    # for getting photo from s3
+    # url = key.generate_url(expires_in=0, force_http=True, query_auth=False) # make url permanent
+    return key_name
 
 
 def delete_file(url):
@@ -37,7 +37,7 @@ def delete_file(url):
 
 
 #--- Helpers ----------------------------------------------
-regex = u's3.amazonaws.com/(.+)'
+regex = u'.cloudfront.net/(.+)'
 def deduce_key_name(url):
     match = re.search(regex, url)
     key_name = match.groups(1)
