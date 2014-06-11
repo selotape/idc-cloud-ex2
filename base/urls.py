@@ -4,6 +4,7 @@ from django.conf.urls import url, patterns
 
 
 urlpatterns = patterns('base.views',
+    url(r'^$', 'mysql', name='mysql'),
     url(r'^mysql$', 'mysql', name='mysql'),
     url(r'^mysql/students/add$', 'mysql_add_student', name='mysql_add_student'),
     url(r'^mysql/students/delete/(?P<student_id>\w{0,50})$', 'mysql_delete_student', name='delete_student' ),
